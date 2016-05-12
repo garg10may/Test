@@ -1,0 +1,66 @@
+import math
+
+def nodes(matrixSize):
+	l = []
+	for i in range(matrixSize):
+		for j in range(matrixSize):
+			l.append((i,j))
+	return l
+
+
+def wordamentMatrix(characters,matrixSize):
+    l = [characters[i:i+matrixSize] for i in range(0, len(characters),matrixSize)]
+    return l
+
+
+def nodeEdgesAdjacencyList(nodes):
+	node_edges ={}
+	n = math.sqrt(len(nodes)) # no of rows
+	for node in nodes:
+		node_edges[node] = []
+		x = int(node[0])
+		y = int(node[1])
+		if 0<=x-1<n and 0<=y+1<n:
+			node_edges[node].append((x-1,y+1))
+		if 0<=x<n and 0<=y+1<n:
+			node_edges[node].append((x,y+1))
+		if 0<=x+1<n and 0<=y+1<n:
+			node_edges[node].append((x,y+1))
+		if 0<=x-1<n and 0<=y<n:
+			node_edges[node].append((x-1,y))
+		if 0<=x+1<n and 0<=y<n:
+			node_edges[node].append((x+1,y))
+		if 0<=x-1<n and 0<=y-1<n:
+			node_edges[node].append((x-1,y-1))
+		if 0<=x<n and 0<=y-1<n:
+			node_edges[node].append((x,y-1))
+		if 0<=x+1<n and 0<=y-1<n:
+			node_edges[node].append((x+1,y-1))
+	return node_edges
+
+
+def WordamentAdjacencyList(wordamentMatrix, matrixSize):
+	n = nodeEdgesAdjacencyList(nodes(matrixSize))
+	d = {} #wordamentAdjacencyMatrix
+	for k, v in n.iteritems():
+		row = k[0]
+		col = k[1]
+		node = wordamentMatrix[row][col]
+		d[(node,(row,col))] = []
+		for i in v:
+			rowEdge = i[0]
+			colEdge = i[1]
+			edge = wordamentMatrix[rowEdge][colEdge]
+			d[(node,(row,col))].append((edge,(rowEdge,colEdge)))
+	return d
+
+
+def find(chain,d):
+        print ''.join( i[0] for i in chain)
+	start = chain[-1]
+	options = set(d[start]) - set(chain)
+	if options:
+		for i in options:
+			find(chain+[i],d)	
+	else:
+		return chain
